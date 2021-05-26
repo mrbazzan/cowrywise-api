@@ -1,9 +1,11 @@
+
 from flask import Flask, jsonify
 from sqlalchemy.types import String, TypeDecorator
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import uuid
 import linked_list
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///api.sqlite"
@@ -21,7 +23,6 @@ class UUID(TypeDecorator):
         self.impl.length = 16
         TypeDecorator.__init__(self, length=self.impl.length)
 
-    @staticmethod
     def process_bind_param(self, value, dialect=None):
         if value and isinstance(value, uuid.UUID):
             return value.hex
@@ -30,7 +31,6 @@ class UUID(TypeDecorator):
         else:
             return None
 
-    @staticmethod
     def process_result_value(self, value, dialect):
         if value:
             return value
@@ -46,7 +46,6 @@ class Api(db.Model):
 
 @app.route('/', methods=['GET'])
 def index():
-
     new_data = Api(
         id=uuid.uuid4(),
         date=datetime.now(),
@@ -63,4 +62,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run()  # TODO: use waitress to serve
+    app.run()
